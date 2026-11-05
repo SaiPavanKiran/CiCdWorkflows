@@ -1,0 +1,60 @@
+name: background task executor
+
+on:
+  push:
+    branches:
+      - '**'
+
+jobs:
+  build:
+    name: build the war
+    runs-on: ubuntu-latest
+    permissions:
+      packages: write # write to github packages
+      contents: read # read repo contents
+    steps:
+      # fetch the project files
+      - name: checkout the project
+        # pre-defined
+        uses: actions/checkout@v4
+
+      - name: setup java 21
+        # pre-defined
+        uses: actions/setup-java@v4
+        with:
+          distribution: temurin
+          java-version: '21'
+          cache: maven
+          server-id: github
+          server-username: GITHUB_ACTOR # ENV variable -  GitHub username associated with the triggering event.
+          server-password: GITHUB_TOKEN # ENV variable - Automatically generated token used to authenticate with GitHub Packages.
+
+
+      - name: check if maven exists
+        run: |
+            if command -v mvn &> /dev/null; then 
+              echo "Maven is already installed"
+            else 
+              echo "Maven is not found. installing..."
+              sudo apt-get update
+              sudo apt-get install -y maven
+            fi
+            mvn --version
+
+      - name: build and test
+        run: |
+          # -B (or --batch-mode): Runs Maven in non-interactive, batch mode
+          # -ntp (or --no-transfer-progress): Suppresses the download progress logs for dependencies.
+          mvn -B -ntp clean verify
+          
+
+      # Step 5: Publish to GitHub Packages
+      - name: Publish to GitHub Packages
+        run: |
+          # mvn deploy runs the complete lifecycle again.
+          # mvn deploy:deploy invokes the Deploy Plugin's deploy goal directly, without rerunning the preceding lifecycle.
+          mvn -B -ntp deploy:deploy
+        env:
+          GITHUB_ACTOR: ${{ github.actor }} # check my_learning for more details
+          GITHUB_TOKEN: ${{ secrets.GITHUB_TOKEN }}
+
