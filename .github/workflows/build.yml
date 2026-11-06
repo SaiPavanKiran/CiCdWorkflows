@@ -20,7 +20,7 @@ jobs:
 
       - name: setup java 21
         # pre-defined
-        uses: actions/setup-java@v4
+        uses: actions/setup-java@v5
         with:
           distribution: temurin
           java-version: '21'
@@ -53,7 +53,18 @@ jobs:
         run: |
           # mvn deploy runs the complete lifecycle again.
           # mvn deploy:deploy invokes the Deploy Plugin's deploy goal directly, without rerunning the preceding lifecycle.
-          mvn -B -ntp deploy:deploy
+          # Publish the already-generated WAR file to GitHub Packages without rebuilding the project.
+          ## deploy:deploy-file uploads an existing artifact instead of executing the Maven build lifecycle.
+          # The main difference is that deploy:deploy publishes an artifact already attached to Maven's current project, whereas deploy:deploy-file publishes a specific file that you explicitly provide.
+          #            deploy:deploy                           deploy:deploy-file
+          # Deploy the current Maven project artifact  Deploy a specific existing file
+          #     Maven project build context              File specified using -Dfile
+           mvn -B -ntp deploy:deploy-file \
+            -Dfile=target/GitHubActions.war \
+            -DpomFile=pom.xml \
+            -Dpackaging=war \
+            -DrepositoryId=github \
+            -Durl=https://maven.pkg.github.com/rspk/TaskGrid
         env:
           GITHUB_ACTOR: ${{ github.actor }} # check my_learning for more details
           GITHUB_TOKEN: ${{ secrets.GITHUB_TOKEN }}
