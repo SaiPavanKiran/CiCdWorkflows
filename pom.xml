@@ -22,12 +22,13 @@
         <project.build.sourceEncoding>UTF-8</project.build.sourceEncoding>
     </properties>
 
-
+    <!--check my learnings-->
     <distributionManagement>
         <repository>
             <id>github</id>
             <name>GitHub Packages</name>
-            <url>https://maven.pkg.github.com/rspk/TaskGrid</url>
+            <!--suppress UnresolvedMavenProperty -->
+            <url>${env.TASK_GRID_ARTIFACT_URL}</url>
         </repository>
     </distributionManagement>
 

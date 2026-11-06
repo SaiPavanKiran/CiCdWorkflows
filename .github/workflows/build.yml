@@ -64,8 +64,10 @@ jobs:
             -DpomFile=pom.xml \
             -Dpackaging=war \
             -DrepositoryId=github \
-            -Durl=https://maven.pkg.github.com/rspk/TaskGrid
+            -Durl="$TASK_GRID_ARTIFACT_URL"
         env:
           GITHUB_ACTOR: ${{ github.actor }} # check my_learning for more details
           GITHUB_TOKEN: ${{ secrets.GITHUB_TOKEN }}
+          TASK_GRID_ARTIFACT_URL: https://maven.pkg.github.com/SaiPavanKiran/CiCdWorkflows
+
 
