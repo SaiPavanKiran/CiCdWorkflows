@@ -7,7 +7,7 @@
     <modelVersion>4.0.0</modelVersion>
 
     <groupId>org.rspk</groupId>
-    <artifactId>cicd-workFlows</artifactId>
+    <artifactId>cicd-workflows</artifactId>
     <version>1.0.0</version>
     <packaging>war</packaging>
 
